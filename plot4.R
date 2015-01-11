@@ -23,27 +23,40 @@ extractData <- function(
   filteredData
 }
 
-plot2 <- function(
+plot4 <- function(
     indir= ".", #input dir
     infile = "household_power_consumption.txt", #input file 
     outdir = ".", #output dir
-    outfile= "plot2.png", #output file
+    outfile= "plot4.png", #output file
     start = "2007-02-01",
     end = "2007-02-02") {
-
+  
   filteredData <- extractData(indir = indir,
                               infile = infile,
                               start = start,
                               end = end)
-
+  
   cat("generating plot...\n" )
-  with(filteredData, 
-       plot(DateTime, Global_active_power, type="l", ylab="Glbal Active Power (kilowatts)", xlab = ""))
-
+  par(mfrow = c(2,2))
+  with(filteredData, {
+    plot(DateTime, Global_active_power, type="l", 
+         ylab="Global Active Power", xlab = "")
+    plot(DateTime, Voltage, type="l", ylab="Voltage", xlab = "datetime")
+    plot(DateTime, Sub_metering_1, type="l", col = "black", 
+         xlab="", ylab="Energy sub metering")
+    lines(DateTime, Sub_metering_2, type="l", col = "red")
+    lines(DateTime, Sub_metering_3, type="l", col = "blue")
+    legend("topright", 
+          lty = 1,
+          col=c("black", "red", "blue"), 
+          legend= c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+    plot(DateTime, Global_reactive_power, type="l", xlab = "datetime")
+  })
   fileName  <- paste(outdir, outfile, sep = "/")
   cat("outputting plot to png file ", fileName, "...\n" )
   dev.copy(png, file = fileName, 
-           width = 480, height = 480, 
+           width = 510, 
+           #height = 480, 
            units = "px")
   dev.off()
 }
